@@ -1,0 +1,16 @@
+{
+  "tutorial": {
+    "start": "Welcome to the tutorial!\n\nWe are going to dive into the game's core mechanics and learn how to use the wide range of commands available to you.\n\nLet's get started!\n\nType `/profile` to view your character information.\nClick the buttons below to navigate through the tutorial.",
+    "stats": "tutorial.stats"
+  },
+  "profile": {
+    "main": "{{profile.name}}\nBalance: `{{profile.balance}}` <{{emojies.gold_bar}}> \n\nLevel: {{profile.levels.level}}\nExperience: {{profile.levels.experience}}\n\nHealth: {{profile.health}}\nMana: {{profile.mana}}\n\nStrength: {{profile.stats.strength}}\nDexterity: {{profile.stats.dexterity}}\nIntelligence: {{profile.stats.intelligence}}\n\nGold: {{profile.stats.gold}}\n\nType `/inventory` to view your inventory."
+  },
+  "fishing": {
+    "fish": "Click the button below to cast your rod, level up or upgrade your fishing pole to catch rarer fish!\n\nLevel: None\nExperience: None\nFishing Pole: Iron Fishing pole\nUpgrade cost: 10,000 :gold:",
+    "fish_caught": "**{{player.name}}** caught a {{name}}\nEarned 11 coins and 18 XP\nLost 37 HP, remaining HP is 63/100"
+  },
+  "mining": {
+    "ore_found": "**{{player.name}}** found {{ores}}."
+  }
+}

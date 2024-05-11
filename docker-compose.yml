@@ -1,0 +1,25 @@
+version: '3'
+
+volumes:
+  discord_data: {}
+
+services:
+  discord-db:
+    image: postgres:alpine
+    container_name: discord-db
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    expose:
+      - '5430'
+    ports:
+      - '5430:5430'
+    volumes:
+      - discord_data:/var/lib/postgresql/data
+    networks:
+      - overlay
+    command: -p 5430
+
+networks:
+  overlay:

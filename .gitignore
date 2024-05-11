@@ -1,0 +1,9 @@
+.idea
+/node_modules
+.env
+db.sqlite*
+test.ts
+dist/
+attachments/
+docs/
+assets/

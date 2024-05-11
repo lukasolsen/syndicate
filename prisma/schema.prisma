@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Mission {
+  id              Int         @id @default(autoincrement())
+  name            String      @unique @db.VarChar(50)
+  description     String
+  type            MissionType @default(DataTheft)
+  rewards         RewardType[]    @default([])
+  level           Int?        @default(1)
+  cost            Int?        @default(0)
+  active          Boolean     @default(true)
+  createdAt       DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime    @default(now()) @db.Timestamp(6)
+  expiresAt       DateTime?   @default(now()) @db.Timestamp(6)
+
+  syndicate       Syndicate?   @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+  syndicateId     Int?
+}
+
+model Skill {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String    @db.VarChar(255)
+  stats       String    @db.VarChar(255)
+  cost        Int       @default(0)
+  type        SkillType
+
+  ownedSkills OwnedSkill[]
+}
+
+model OwnedSkill {
+  skillId     Int
+  syndicateId Int
+
+  skill       Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  syndicate   Syndicate @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+
+  level       Int       @default(0)
+
+  @@id([skillId, syndicateId])
+}
+
+model Invite {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  syndicateId Int
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  syndicate  Syndicate @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime  @default(now()) @db.Timestamp(6)
+  createdAt  DateTime  @default(now()) @db.Timestamp(6)
+}
+
+model Member {
+  id          Int         @id @default(autoincrement())
+  userId      Int         @unique
+  syndicateId Int
+  role        MemberRole  @default(MEMBER)
+  syndicate   Syndicate   @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Stats {
+  id              Int         @id @default(autoincrement())
+  balance         Decimal     @db.Decimal(10, 2)
+  incomeHourly    Decimal     @db.Decimal(10, 2)
+  level           Int
+  experience      Decimal     @db.Decimal(10, 2)
+  skillPoints     Int         @default(0)
+  reputation      Int
+  syndicateId     Int         @unique
+  syndicate       Syndicate   @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+}
+
+model History {
+  id          Int         @id @default(autoincrement())
+  type        HistoryType @default(OTHER)
+  description String
+  userId      Int
+  syndicateId Int
+  syndicate   Syndicate   @relation(fields: [syndicateId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Alias {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime  @default(now()) @db.Timestamp(6)
+  syndicateA     Syndicate @relation("SyndicateConnectionA", fields: [syndicateAId], references: [id], onDelete: Cascade)
+  syndicateAId   Int
+  syndicateB     Syndicate @relation("SyndicateConnectionB", fields: [syndicateBId], references: [id], onDelete: Cascade)
+  syndicateBId   Int
+}
+
+model Syndicate {
+  id          Int         @id @default(autoincrement())
+  name        String
+  tag         String      @db.VarChar(6)
+  description String
+  createdAt   DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime    @default(now()) @db.Timestamp(6)
+  history     History[]
+  members     Member[]
+  stats       Stats?
+  invites     Invite[]
+  skills      OwnedSkill[]
+  aliasesA    Alias[]     @relation("SyndicateConnectionA")
+  aliasesB    Alias[]     @relation("SyndicateConnectionB")
+  missions    Mission[]
+}
+
+model Permission {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  users     User     @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id          Int         @id @default(autoincrement())
+  discordId   String      @unique
+  createdAt   DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime    @default(now()) @db.Timestamp(6)
+  history     History[]
+  member      Member?
+  permissions Permission[]
+  invites     Invite[]
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum HistoryType {
+  TRANSACTION
+  MEMBER_CHANGE
+  OTHER
+}
+
+enum SkillType {
+  HackingTechniques
+  MalwareDevelopment
+  SecurityExpertise
+  NetworkingSkills
+  SocialEngineering
+  BlackMarketMastery
+}
+
+enum MissionType {
+  DataTheft
+  WebsiteDefacement
+  DDoS
+  Ransomware
+  SocialEngineering
+  BotnetRecruitment
+  Phishing
+  MalwareDistribution
+  CryptocurrencyMining
+  IdentityTheft
+  Espionage
+  Extortion
+  Blackmail
+}
+
+enum RewardType {
+  Money
+  Experience
+  SkillPoints
+  Reputation
+
+  Equipment
+  Skill
+  Extension
+}
