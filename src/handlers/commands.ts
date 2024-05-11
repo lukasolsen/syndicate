@@ -24,23 +24,26 @@ module.exports = async (client: Client) => {
       for (const subFile of subFiles) {
         if (!checkCorrectFile(subFile)) return;
 
-        const command: SlashCommand = // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require(`${slashCommandsDir}/${file}/${subFile}`).default;
+        const input = join(slashCommandsDir, file, subFile);
+
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const command: SlashCommand = require(input).default;
         slashCommands.push(command.command);
         client.slashCommands.set(command.command.name, command);
         consola.success(
-          `Successfully registered command: ${command.command.name}`
+          `Successfully registered command: ${command.command.name}`,
         );
       }
     } else {
       if (!checkCorrectFile(file)) return;
+      const input = join(slashCommandsDir, file);
 
-      const command: SlashCommand = // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require(`${slashCommandsDir}/${file}`).default;
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const command: SlashCommand = require(input).default;
       slashCommands.push(command.command);
       client.slashCommands.set(command.command.name, command);
       consola.success(
-        `Successfully registered command: ${command.command.name}`
+        `Successfully registered command: ${command.command.name}`,
       );
     }
   }
@@ -51,11 +54,11 @@ module.exports = async (client: Client) => {
       .put(
         Routes.applicationGuildCommands(
           process.env.APPLICATION_ID,
-          process.env.DEV_GUILD_ID
+          process.env.DEV_GUILD_ID,
         ),
         {
           body: slashCommands.map((command) => command.toJSON()),
-        }
+        },
       )
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((data: any) => {

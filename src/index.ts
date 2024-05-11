@@ -39,8 +39,10 @@ client.slashCommands = new Collection<string, SlashCommand>();
 const handlersDir = join(__dirname, './handlers');
 readdirSync(handlersDir).forEach((handler) => {
   if (!handler.endsWith('.ts') && !handler.endsWith('.js')) return;
+  const input = join(handlersDir, handler);
+
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require(`${handlersDir}/${handler}`)(client);
+  require(input)(client);
 });
 
 client
@@ -48,11 +50,11 @@ client
   .then(async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     process.on('unhandledRejection', (error: Error, _: Promise<unknown>) =>
-      logError(error, client)
+      logError(error, client),
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     process.on('uncaughtException', (error: Error, _: string) =>
-      logError(error, client)
+      logError(error, client),
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     process.on('warning', (error: Error, _: string) => logError(error, client));
