@@ -39,10 +39,9 @@ client.slashCommands = new Collection<string, SlashCommand>();
 const handlersDir = join(__dirname, './handlers');
 readdirSync(handlersDir).forEach((handler) => {
   if (!handler.endsWith('.ts') && !handler.endsWith('.js')) return;
-  const input = join(handlersDir, handler);
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require(input)(client);
+  require(handlersDir + '/' + handler)(client);
 });
 
 client

@@ -10,10 +10,9 @@ module.exports = (client: Client) => {
 
   readdirSync(eventsDir).forEach((file) => {
     if (!file.endsWith('.ts') && !file.endsWith('.js')) return;
-    const input = join(eventsDir, file);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const event: BotEvent = require(input).default;
+    const event: BotEvent = require(eventsDir + '/' + file).default;
 
     if (event.type === EventType.ONCE)
       client.once(event.name, (...args) => event.execute(...args));

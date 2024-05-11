@@ -24,10 +24,10 @@ module.exports = async (client: Client) => {
       for (const subFile of subFiles) {
         if (!checkCorrectFile(subFile)) return;
 
-        const input = join(slashCommandsDir, file, subFile);
-
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const command: SlashCommand = require(input).default;
+        const command: SlashCommand = require(
+          slashCommandsDir + '/' + file + '/' + subFile,
+        ).default;
         slashCommands.push(command.command);
         client.slashCommands.set(command.command.name, command);
         consola.success(
@@ -36,10 +36,11 @@ module.exports = async (client: Client) => {
       }
     } else {
       if (!checkCorrectFile(file)) return;
-      const input = join(slashCommandsDir, file);
 
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const command: SlashCommand = require(input).default;
+      const command: SlashCommand = require(
+        slashCommandsDir + '/' + file,
+      ).default;
       slashCommands.push(command.command);
       client.slashCommands.set(command.command.name, command);
       consola.success(
